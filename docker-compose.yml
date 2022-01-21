@@ -1,0 +1,16 @@
+services:
+  postgres:
+    image: postgres:14
+    ports:
+      - "5432:5432"
+    environment:
+      - POSTGRES_PASSWORD=golang
+      - POSTGRES_USER=gorm
+      - POSTGRES_DB=go_playground
+
+  adminer:
+    image: adminer:4
+    ports:
+      - "8080:8080"
+    links:
+      - postgres
