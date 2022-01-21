@@ -1,12 +1,12 @@
 package app
 
 import (
-	"fmt"
 	"encoding/json"
-	"net/http"
-	"github.com/gorilla/mux"
+	"fmt"
 	"golangplayground/app/models"
-	
+	"net/http"
+
+	"github.com/gorilla/mux"
 )
 
 type ApiPagination struct {
@@ -24,15 +24,15 @@ func (app *App) TodoIndexHandler() http.HandlerFunc {
 		app.Database.Find(&todosList)
 
 		pagination := ApiPagination{
-			Next: nil,
+			Next:     nil,
 			Previous: nil,
-			Last: 1,
-			Current: 1,
-			Items: todosList,
+			Last:     1,
+			Current:  1,
+			Items:    todosList,
 		}
 
 		serialized, _ := json.Marshal(pagination)
-		
+
 		writer.Header().Add("Content-Type", "application/json")
 
 		fmt.Fprintf(writer, string(serialized))
@@ -55,14 +55,13 @@ func (app *App) TodoDetailsHandler() http.HandlerFunc {
 			return
 		}
 
-		serialized, _ := json.Marshal(todoItem) 
+		serialized, _ := json.Marshal(todoItem)
 
 		writer.Header().Add("Content-Type", "application/json")
 
 		fmt.Fprintf(writer, string(serialized))
 	}
 }
-
 
 func (app *App) TodoTasksHandler() http.HandlerFunc {
 	return func(writer http.ResponseWriter, request *http.Request) {
@@ -84,7 +83,15 @@ func (app *App) TodoTasksHandler() http.HandlerFunc {
 
 		app.Database.Find(&tasks, "todo_id = ?", todoId)
 
-		serialized, _ := json.Marshal(tasks) 
+		pagination := ApiPagination{
+			Next:     nil,
+			Previous: nil,
+			Last:     1,
+			Current:  1,
+			Items:    tasks,
+		}
+
+		serialized, _ := json.Marshal(pagination)
 
 		writer.Header().Add("Content-Type", "application/json")
 
