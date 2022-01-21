@@ -1,0 +1,142 @@
+openapi: 3.0.0
+
+info:
+  title: Todo API
+  description: This is the documentation of a todos and tasks API
+  version: 0.0.1
+
+servers:
+ - url: 'http://localhost:9000'
+   description: Local development server
+
+paths:
+  /api/todos:
+    get:
+      description: List todos
+      responses:
+        '200':
+          description: A list of todos
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/ApiPagination'
+                  - type: object
+                    properties:
+                      items:
+                        type: array
+                        items:
+                          allOf:
+                            - $ref: '#/components/schemas/TodoModel'
+
+  /api/todos/{todoId}:
+    get:
+      description: Show a specific todo
+      parameters:
+        - in: path
+          name: todoId
+          description: Todo ID
+          required: true
+          schema:
+            type: number
+            format: int64
+      responses:
+        '200':
+          description: A todo
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/TodoModel'
+        '404':
+          description: The todo with the given ID does not exist
+
+  /api/todos/{todoId}/tasks:
+    get:
+      description: Show a specific todo's tasks
+      parameters:
+        - in: path
+          name: todoId
+          description: Todo ID
+          required: true
+          schema:
+            type: number
+            format: int64
+      responses:
+        '200':
+          description: Todo's tasks
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/ApiPagination'
+                  - type: object
+                    properties:
+                      items:
+                        type: array
+                        items:
+                          allOf:
+                            - $ref: '#/components/schemas/TaskModel'
+          
+        '404':
+          description: The todo with the given ID does not exist
+
+components:
+  schemas:
+    GormBaseModel:
+      description: GORM base model with attributes
+      type: object
+      properties:
+        id:
+          type: number
+          format: int64
+        createdAt:
+          type: string
+          format: date-time
+        updatedAt:
+          type: string
+          format: date
+        deletedAt:
+          type: string
+          format: date
+
+    TodoModel:
+      description: Todo model
+      type: object
+      allOf:
+        - $ref: '#/components/schemas/GormBaseModel'
+        - type: object
+          properties:
+            name:
+              type: string
+            description:
+              type: string
+
+    TaskModel:
+      description: Task model
+      type: object
+      allOf:
+        - $ref: '#/components/schemas/GormBaseModel'
+        - type: object
+          properties:
+            name:
+              type: string
+            description:
+              type: string
+
+    ApiPagination:
+      description: API pagination model
+      type: object
+      properties:
+        next:
+          type: number
+          format: int64
+        previous:
+          type: number
+          format: int64
+        last:
+          type: number
+          format: int64
+        current:
+          type: number
+          format: int64
