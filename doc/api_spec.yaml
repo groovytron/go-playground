@@ -29,6 +29,33 @@ paths:
                           allOf:
                             - $ref: '#/components/schemas/TodoModel'
 
+    post:
+      description: Create a todo
+      requestBody:
+        description: The todo you want to create
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/TodoCreateModel'
+
+      responses:
+        '200':
+          description: The created todo
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/TodoModel'
+        '400':
+          description: Submitted data is invalid
+          content:
+            text/plain:
+              schema:
+                type: string
+                example: "Key: 'TodoCreateSchema.Description' Error:Field validation for 'Description' failed on the 'required' tag"
+
+
   /api/todos/{todoId}:
     get:
       description: Show a specific todo
@@ -77,7 +104,7 @@ paths:
                         items:
                           allOf:
                             - $ref: '#/components/schemas/TaskModel'
-          
+
         '404':
           description: The todo with the given ID does not exist
 
@@ -111,6 +138,20 @@ components:
               type: string
             description:
               type: string
+
+    TodoCreateModel:
+      description: Todo create model
+      type: object
+      allOf:
+        - type: object
+          properties:
+            name:
+              type: string
+            description:
+              type: string
+          required:
+            - name
+            - description
 
     TaskModel:
       description: Task model
