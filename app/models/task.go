@@ -13,5 +13,6 @@ type Task struct {
 	DeletedAt   gorm.DeletedAt `gorm:"index" json:"deletedAt"`
 	Name        string         `json:"name"`
 	Description string         `json:"description"`
-	TodoID      uint           `json:"-"`
+	TodoID      uint           `gorm:"not null"`
+	Todo        Todo           `gorm:"foreignKey:TodoID" json:"-"`
 }
