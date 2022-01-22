@@ -11,7 +11,6 @@ import (
 	"github.com/gorilla/mux"
 )
 
-
 func (app *App) TodoIndexHandler() http.HandlerFunc {
 	return func(writer http.ResponseWriter, request *http.Request) {
 		var todosList []models.Todo
@@ -93,7 +92,6 @@ func (app *App) TodoTasksHandler() http.HandlerFunc {
 		fmt.Fprintf(writer, string(serialized))
 	}
 }
-
 
 func (app *App) TodoSaveHandler() http.HandlerFunc {
 	return func(writer http.ResponseWriter, request *http.Request) {
