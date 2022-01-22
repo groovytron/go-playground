@@ -6,7 +6,7 @@ import (
 )
 
 type App struct {
-	Router *mux.Router
+	Router   *mux.Router
 	Database *gorm.DB
 }
 
