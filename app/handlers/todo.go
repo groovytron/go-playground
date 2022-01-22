@@ -16,7 +16,9 @@ func TodoIndexHandler(app *core.App) http.HandlerFunc {
 	return func(writer http.ResponseWriter, request *http.Request) {
 		var todos []models.Todo
 
-		paginator := helpers.NewPaginator(&todos, app.Database, request, helpers.PAGE_SIZE)
+		db := app.Database.Find(&todos).Order("id ASC")
+
+		paginator := helpers.NewPaginator(&todos, db, request, helpers.PAGE_SIZE)
 
 		pagination := schemas.ApiPaginationSchema{
 			TotalItems: paginator.TotalItems,

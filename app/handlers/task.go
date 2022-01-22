@@ -29,7 +29,7 @@ func TodoTasksHandler(app *core.App) http.HandlerFunc {
 			return
 		}
 
-		db := app.Database.Find(&tasks, "todo_id = ?", todoId)
+		db := app.Database.Find(&tasks, "todo_id = ?", todoId).Order("id ASC")
 
 		paginator := helpers.NewPaginator(&tasks, db, request, helpers.PAGE_SIZE)
 

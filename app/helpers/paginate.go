@@ -32,7 +32,7 @@ func GetPage(request *http.Request) int64 {
 func NewPaginator(output interface{}, database *gorm.DB, request *http.Request, pageSize int64) Paginator {
 	var totalItems int64
 
-	database.Find(output).Count(&totalItems)
+	database.Count(&totalItems)
 
 	totalPages := int64(math.Ceil(float64(totalItems) / float64(pageSize)))
 
