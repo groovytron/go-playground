@@ -23,6 +23,7 @@ func New() *App {
 func (app *App) initRoutes() {
 	app.Router.StrictSlash(true)
 	app.Router.HandleFunc("/api/todos", app.TodoIndexHandler()).Methods("GET")
+	app.Router.HandleFunc("/api/todos", app.TodoSaveHandler()).Methods("POST")
 	app.Router.HandleFunc("/api/todos/{todoId:[0-9]+}", app.TodoDetailsHandler()).Methods("GET")
 	app.Router.HandleFunc("/api/todos/{todoId:[0-9]+}/tasks", app.TodoTasksHandler()).Methods("GET")
 }

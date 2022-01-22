@@ -6,6 +6,7 @@ import (
 	"golangplayground/app/models"
 	"net/http"
 
+	"github.com/go-playground/validator/v10"
 	"github.com/gorilla/mux"
 )
 
@@ -94,6 +95,41 @@ func (app *App) TodoTasksHandler() http.HandlerFunc {
 		serialized, _ := json.Marshal(pagination)
 
 		writer.Header().Add("Content-Type", "application/json")
+
+		fmt.Fprintf(writer, string(serialized))
+	}
+}
+
+type TodoSave struct {
+	Name        string `json:"name" validate:"required"`
+	Description string `json:"description" validate:"required"`
+}
+
+func (app *App) TodoSaveHandler() http.HandlerFunc {
+	return func(writer http.ResponseWriter, request *http.Request) {
+		var todo TodoSave
+
+		err := json.NewDecoder(request.Body).Decode(&todo)
+
+		if err != nil {
+			http.Error(writer, err.Error(), http.StatusBadRequest)
+			return
+		}
+
+		validator := validator.New()
+
+		err = validator.Struct(todo)
+
+		if err != nil {
+			http.Error(writer, err.Error(), http.StatusBadRequest)
+			return
+		}
+
+		todoToSave := models.Todo{Name: todo.Name, Description: todo.Description}
+
+		app.Database.Create(&todoToSave)
+
+		serialized, _ := json.Marshal(todoToSave)
 
 		fmt.Fprintf(writer, string(serialized))
 	}
