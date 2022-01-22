@@ -7,7 +7,7 @@ import (
 	"strconv"
 )
 
-const PAGE_SIZE = 1
+const PAGE_SIZE = 10
 
 func Paginate(request *http.Request) func(database *gorm.DB) *gorm.DB {
 	return func(database *gorm.DB) *gorm.DB {
