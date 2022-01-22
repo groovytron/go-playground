@@ -3,11 +3,12 @@ package handlers
 import (
 	"encoding/json"
 	"fmt"
+	"github.com/gorilla/mux"
 	"golangplayground/app/core"
+	"golangplayground/app/helpers"
 	"golangplayground/app/models"
 	"golangplayground/app/schemas"
 	"net/http"
-	"github.com/gorilla/mux"
 )
 
 func TodoTasksHandler(app *core.App) http.HandlerFunc {
@@ -28,14 +29,17 @@ func TodoTasksHandler(app *core.App) http.HandlerFunc {
 			return
 		}
 
-		app.Database.Find(&tasks, "todo_id = ?", todoId)
+		db := app.Database.Find(&tasks, "todo_id = ?", todoId)
+
+		paginator := helpers.NewPaginator(&tasks, db, request, helpers.PAGE_SIZE)
 
 		pagination := schemas.ApiPaginationSchema{
-			Next:     nil,
-			Previous: nil,
-			Last:     1,
-			Current:  1,
-			Items:    tasks,
+			TotalItems: paginator.TotalItems,
+			Next:       paginator.NextPage,
+			Previous:   paginator.PreviousPage,
+			Last:       paginator.LastPage,
+			Current:    paginator.CurrentPage,
+			Items:      paginator.Items,
 		}
 
 		serialized, _ := json.Marshal(pagination)

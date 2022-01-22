@@ -3,26 +3,28 @@ package handlers
 import (
 	"encoding/json"
 	"fmt"
+	"github.com/go-playground/validator/v10"
+	"github.com/gorilla/mux"
 	"golangplayground/app/core"
+	"golangplayground/app/helpers"
 	"golangplayground/app/models"
 	"golangplayground/app/schemas"
 	"net/http"
-	"github.com/go-playground/validator/v10"
-	"github.com/gorilla/mux"
 )
 
 func TodoIndexHandler(app *core.App) http.HandlerFunc {
 	return func(writer http.ResponseWriter, request *http.Request) {
-		var todosList []models.Todo
+		var todos []models.Todo
 
-		app.Database.Find(&todosList)
+		paginator := helpers.NewPaginator(&todos, app.Database, request, helpers.PAGE_SIZE)
 
 		pagination := schemas.ApiPaginationSchema{
-			Next:     nil,
-			Previous: nil,
-			Last:     1,
-			Current:  1,
-			Items:    todosList,
+			TotalItems: paginator.TotalItems,
+			Next:       paginator.NextPage,
+			Previous:   paginator.PreviousPage,
+			Last:       paginator.LastPage,
+			Current:    paginator.CurrentPage,
+			Items:      paginator.Items,
 		}
 
 		serialized, _ := json.Marshal(pagination)
