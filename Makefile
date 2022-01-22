@@ -1,3 +1,5 @@
+GO_SRC=$(shell find . -type f -name '*.go')
+
 .PHONY: run
 run:
 	air
@@ -8,4 +10,4 @@ build:
 
 .PHONY: fix
 fix:
-	gopls format -w **/*.go
+	@gopls format -w $(GO_SRC)
