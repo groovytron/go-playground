@@ -8,4 +8,4 @@ build:
 
 .PHONY: fix
 fix:
-	go fmt
+	gopls format -w **/*.go
