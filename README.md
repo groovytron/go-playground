@@ -24,6 +24,8 @@ PostgreSQL is available on `localhost:5432`.
 
 [Adminer](https://www.adminer.org/) is available on <http://localhost:8080> to allow you to access the database and insert data.
 
+An [Open API specification](https://swagger.io/specification/) is available in [doc/api_spec.yaml](./doc/api_spec.yaml).
+
 ## Useful links
 
 - [Write a Simple REST API in Golang](https://dev.to/lucasnevespereira/write-a-rest-api-in-golang-following-best-practices-pe9)
