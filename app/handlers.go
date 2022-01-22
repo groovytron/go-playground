@@ -4,19 +4,13 @@ import (
 	"encoding/json"
 	"fmt"
 	"golangplayground/app/models"
+	"golangplayground/app/schemas"
 	"net/http"
 
 	"github.com/go-playground/validator/v10"
 	"github.com/gorilla/mux"
 )
 
-type ApiPagination struct {
-	Next     *int64      `json:"next"`
-	Previous *int64      `json:"previous"`
-	Last     int64       `json:"last"`
-	Current  int64       `json:"current"`
-	Items    interface{} `json:"items"`
-}
 
 func (app *App) TodoIndexHandler() http.HandlerFunc {
 	return func(writer http.ResponseWriter, request *http.Request) {
@@ -24,7 +18,7 @@ func (app *App) TodoIndexHandler() http.HandlerFunc {
 
 		app.Database.Find(&todosList)
 
-		pagination := ApiPagination{
+		pagination := schemas.ApiPaginationSchema{
 			Next:     nil,
 			Previous: nil,
 			Last:     1,
@@ -84,7 +78,7 @@ func (app *App) TodoTasksHandler() http.HandlerFunc {
 
 		app.Database.Find(&tasks, "todo_id = ?", todoId)
 
-		pagination := ApiPagination{
+		pagination := schemas.ApiPaginationSchema{
 			Next:     nil,
 			Previous: nil,
 			Last:     1,
@@ -100,14 +94,10 @@ func (app *App) TodoTasksHandler() http.HandlerFunc {
 	}
 }
 
-type TodoSave struct {
-	Name        string `json:"name" validate:"required"`
-	Description string `json:"description" validate:"required"`
-}
 
 func (app *App) TodoSaveHandler() http.HandlerFunc {
 	return func(writer http.ResponseWriter, request *http.Request) {
-		var todo TodoSave
+		var todo schemas.TodoCreateSchema
 
 		err := json.NewDecoder(request.Body).Decode(&todo)
 
