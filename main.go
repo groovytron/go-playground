@@ -16,7 +16,7 @@ func main() {
 	// Read .env
 	loadEnvFile()
 
-	app := app.New()
+	app := app.NewApp()
 
 	// Connect to database
 	// database, err := gorm.Open(sqlite.Open("test.db"), &gorm.Config{})
