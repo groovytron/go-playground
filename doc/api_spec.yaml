@@ -9,10 +9,24 @@ servers:
  - url: 'http://localhost:9000'
    description: Local development server
 
+tags:
+  - name: Todo
+    description: A todo is mainly a list of tasks with a name and a description
+  - name: Task
+    description: A task is an item contained in a todo.
+
 paths:
   /api/todos:
     get:
       description: List todos
+      tags:
+        - Todo
+      parameters:
+        - in: query
+          name: page 
+          schema:
+            type: integer
+          description: The page number
       responses:
         '200':
           description: A list of todos
@@ -31,6 +45,8 @@ paths:
 
     post:
       description: Create a todo
+      tags:
+        - Todo
       requestBody:
         description: The todo you want to create
         required: true
@@ -58,7 +74,9 @@ paths:
 
   /api/todos/{todoId}:
     get:
-      description: Show a specific todo
+      description: Show a todo
+      tags:
+        - Todo
       parameters:
         - in: path
           name: todoId
@@ -69,7 +87,7 @@ paths:
             format: int64
       responses:
         '200':
-          description: A todo
+          description: The todo data
           content:
             application/json:
               schema:
@@ -78,10 +96,65 @@ paths:
         '404':
           description: The todo with the given ID does not exist
 
+    put:
+      description: Update a todo
+      tags:
+        - Todo
+      parameters:
+        - in: path
+          name: todoId
+          description: Todo ID
+          required: true
+          schema:
+            type: number
+            format: int64
+      requestBody:
+        description: The todo's new data
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/TodoCreateModel'
+      responses:
+        '200':
+          description: The updated todo
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/TodoModel'
+        '404':
+          description: The todo with the given ID does not exist
+
+    delete:
+      description: Delete a todo
+      tags:
+        - Todo
+      parameters:
+        - in: path
+          name: todoId
+          description: Todo ID
+          required: true
+          schema:
+            type: number
+            format: int64
+      responses:
+        '200':
+          description: The todo has been deleted
+        '404':
+          description: The todo with the given ID does not exist
+
   /api/todos/{todoId}/tasks:
     get:
-      description: Show a specific todo's tasks
+      description: List a todo's tasks
+      tags:
+        - Task
       parameters:
+        - in: query
+          name: page 
+          schema:
+            type: integer
+          description: The page number
         - in: path
           name: todoId
           description: Todo ID
@@ -107,6 +180,92 @@ paths:
 
         '404':
           description: The todo with the given ID does not exist
+
+    post:
+      description: Create and add a new task to the todo
+      tags:
+        - Task
+      parameters:
+        - in: path
+          name: todoId
+          description: Todo ID
+          required: true
+          schema:
+            type: number
+            format: int64
+      requestBody:
+        description: The task you want to create
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/TaskCreateModel'
+
+      responses:
+        '200':
+          description: The created task
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/TaskModel'
+        '400':
+          description: Submitted data is invalid
+          content:
+            text/plain:
+              schema:
+                type: string
+                example: "Key: 'TaskCreateSchema.Description' Error:Field validation for 'Description' failed on the 'required' tag"
+
+  /api/tasks/{taskId}:
+    put:
+      description: Update a task
+      tags:
+        - Task
+      parameters:
+        - in: path
+          name: taskId
+          description: Task ID
+          required: true
+          schema:
+            type: number
+            format: int64
+      requestBody:
+        description: The task's new data
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/TaskCreateModel'
+      responses:
+        '200':
+          description: The updated task
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/TaskModel'
+        '404':
+          description: The task with the given ID does not exist
+
+    delete:
+      description: Delete a task
+      tags:
+        - Task
+      parameters:
+        - in: path
+          name: taskId
+          description: Task ID
+          required: true
+          schema:
+            type: number
+            format: int64
+      responses:
+        '200':
+          description: The task has been deleted
+        '404':
+          description: The task with the given ID does not exist
+
 
 components:
   schemas:
@@ -164,6 +323,20 @@ components:
               type: string
             description:
               type: string
+
+    TaskCreateModel:
+      description: Task create model
+      type: object
+      allOf:
+        - type: object
+          properties:
+            name:
+              type: string
+            description:
+              type: string
+          required:
+            - name
+            - description
 
     ApiPagination:
       description: API pagination model
